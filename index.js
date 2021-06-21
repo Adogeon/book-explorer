@@ -51,7 +51,7 @@ const parseElement = (ele) => {
 
 const parseWebsite = async () => {
   let json;
-  const response = await fetch("https://news.ycombinator.com/");
+  const response = await fetch("https://www.google.com");
   const rawHtmlData = await response.text();
 
   const handler = new DomHandler((error, dom) => {
