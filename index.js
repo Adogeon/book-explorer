@@ -6,9 +6,12 @@ const {
   getChildren,
   getAttributeValue,
   findOne,
+  findAll,
   getName,
   removeElement,
   innerText,
+  getElementById,
+  textContent,
 } = require("domutils");
 const domRender = require("dom-serializer").default;
 const exphbs = require("express-handlebars");
@@ -28,30 +31,28 @@ app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
 const parseElement = (ele) => {
-  if (Array.isArray(ele)) {
-    return ele.map((e) => parseElement(e));
-  } else {
-    let result = {};
-    if (getName(ele) === "script") return;
-    if (getName(ele) === "link") return;
-    let eleChildrens = getChildren(ele);
-    if (eleChildrens.length > 0) {
-      result.children = parseElement(eleChildrens);
-    }
-    result.name = getName(ele);
-    result.class = getAttributeValue(ele, "class");
-    result.id = getAttributeValue(ele, "id");
-    if (getName(ele) === "a") {
-      result.innerText = innerText(ele);
-      result.url = getAttributeValue(ele, "href");
-    }
-    return result;
+  switch (getAttributeValue(ele, "id")) {
+    case "coverImage":
+      return getAttributeValue(ele, "src");
+    case "bookTitle":
+      return innerText(ele);
+    case "bookSeries":
+      return innerText(ele);
+    case "description":
+      const children = getChildren(ele);
+      const descriptions = findAll((ele) => getName(ele) === "span", children);
+      return textContent(descriptions[1]);
+      break;
+    default:
+      return {};
   }
 };
 
 const parseWebsite = async () => {
   let json;
-  const response = await fetch("https://www.google.com");
+  const response = await fetch(
+    "https://www.goodreads.com/book/show/5907.The_Hobbit_or_There_and_Back_Again"
+  );
   const rawHtmlData = await response.text();
 
   const handler = new DomHandler((error, dom) => {
@@ -65,7 +66,13 @@ const parseWebsite = async () => {
       const mainDom = findOne((ele) => {
         return getName(ele) === "body";
       }, dom);
-      json = parseElement(mainDom);
+      json = {};
+      json.coverImg = parseElement(getElementById("coverImage", mainDom)) ?? {};
+      json.bookTitle = parseElement(getElementById("bookTitle", mainDom)) ?? {};
+      json.bookSeries =
+        parseElement(getElementById("bookSeries", mainDom)) ?? {};
+      json.description =
+        parseElement(getElementById("description", mainDom)) ?? {};
     }
   });
   const parser = new Parser(handler);

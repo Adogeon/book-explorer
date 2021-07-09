@@ -1,6 +1,15 @@
 <div>
-  <h1>DOM Tree</h1>
+  <h1>Scrapre Book Result</h1>
+  <div class="imageWrapper">
+    <img id="bookCover" alt="book cover" src={{data.coverImg}} />
+  </div>
   <div>
-    {{> element data}}
+    <h2>{{data.bookTitle}}</h2>
+  </div>
+  <div>
+    <p>{{data.bookSeries}}</p>
+  </div>
+  <div>
+    {{data.description}}
   </div>
 </div>
