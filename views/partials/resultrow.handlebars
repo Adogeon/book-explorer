@@ -1,0 +1,15 @@
+<div class="resultRow">
+  <div class="imgWrapper">
+    <img alt="bookCover" class="bookCover" src={{this.coverImg}} />
+  </div>
+  <div class="bookData">
+    <div class= "bookTitle">
+      <span>{{this.title}}</span>
+    </div>
+    <div class="author">
+      {{#each this.author}}
+        <span class="authorName">{{this}}</span>
+      {{/each}}
+    </div>
+  </div>
+</div>

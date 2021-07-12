@@ -6,7 +6,9 @@ const {
   getChildren,
   getAttributeValue,
   findOne,
+  getElementsByTagName,
   findAll,
+  find,
   getName,
   removeElement,
   innerText,
@@ -30,7 +32,7 @@ app.use(express.json());
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
-const parseElement = (ele) => {
+const parseBookElement = (ele) => {
   switch (getAttributeValue(ele, "id")) {
     case "coverImage":
       return getAttributeValue(ele, "src");
@@ -42,13 +44,12 @@ const parseElement = (ele) => {
       const children = getChildren(ele);
       const descriptions = findAll((ele) => getName(ele) === "span", children);
       return textContent(descriptions[1]);
-      break;
     default:
       return {};
   }
 };
 
-const parseWebsite = async () => {
+const parseBookResult = async () => {
   let json;
   const response = await fetch(
     "https://www.goodreads.com/book/show/5907.The_Hobbit_or_There_and_Back_Again"
@@ -67,12 +68,14 @@ const parseWebsite = async () => {
         return getName(ele) === "body";
       }, dom);
       json = {};
-      json.coverImg = parseElement(getElementById("coverImage", mainDom)) ?? {};
-      json.bookTitle = parseElement(getElementById("bookTitle", mainDom)) ?? {};
+      json.coverImg =
+        parseBookElement(getElementById("coverImage", mainDom)) ?? {};
+      json.bookTitle =
+        parseBookElement(getElementById("bookTitle", mainDom)) ?? {};
       json.bookSeries =
-        parseElement(getElementById("bookSeries", mainDom)) ?? {};
+        parseBookElement(getElementById("bookSeries", mainDom)) ?? {};
       json.description =
-        parseElement(getElementById("description", mainDom)) ?? {};
+        parseBookElement(getElementById("description", mainDom)) ?? {};
     }
   });
   const parser = new Parser(handler);
@@ -82,13 +85,65 @@ const parseWebsite = async () => {
   return json;
 };
 
+const parseBookSearchResult = (cNodes) => {
+  const tableRowNodes = find((node) => getName(node) === "tr", cNodes, true);
+  return tableRowNodes.map((childrenNode) => {
+    const bookDataNode = getChildren(childrenNode);
+    const bookCoverNode = findOne(
+      (node) => getAttributeValue(node, "itemprop") === "image",
+      bookDataNode,
+      true
+    );
+    const bookNameNodes = find(
+      (node) => getAttributeValue(node, "itemprop") === "name",
+      bookDataNode,
+      true
+    );
+
+    const bookTitleNode = bookNameNodes[0];
+    const bookAuthorNames = bookNameNodes.slice(1);
+
+    return {
+      coverImg: getAttributeValue(bookCoverNode, "src"),
+      title: innerText(bookTitleNode),
+      author: bookAuthorNames.map((node) => innerText(node)),
+    };
+  });
+};
+
+const parseBookSearch = async () => {
+  let json;
+  const response = await fetch(
+    "https://www.goodreads.com/search?utf8=%E2%9C%93&query=Firework"
+  );
+  const rawHtmlData = await response.text();
+  const handler = new DomHandler((error, dom) => {
+    if (error) {
+      console.error(error);
+    } else {
+      const mainDom = findOne((ele) => getName(ele) === "body", dom);
+      const tableDom = getElementsByTagName("table", mainDom, true);
+      json = parseBookSearchResult(getChildren(tableDom[0]));
+    }
+  });
+  const parser = new Parser(handler);
+  parser.write(rawHtmlData);
+  parser.end();
+  return json;
+};
+
 app.get("/", async (req, res) => {
   res.render("home");
 });
 
 app.get("/scrape", async (req, res) => {
-  const json = await parseWebsite();
-  res.render("result", { data: json });
+  const json = await parseBookResult();
+  res.render("book", { data: json });
+});
+
+app.get("/search", async (req, res) => {
+  const json = await parseBookSearch();
+  res.render("result", { result: json });
 });
 
 app.get("/test", async (req, res) => {
