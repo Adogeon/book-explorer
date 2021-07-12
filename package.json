@@ -4,7 +4,7 @@
   "description": "Simple server with Express",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha",
     "dev": "nodemon index.js"
   },
   "author": "Anh Dao",
@@ -18,6 +18,8 @@
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
+    "chai": "^4.3.4",
+    "mocha": "^9.0.2",
     "nodemon": "^2.0.7"
   }
 }

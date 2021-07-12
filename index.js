@@ -7,16 +7,13 @@ const {
   getAttributeValue,
   findOne,
   getElementsByTagName,
-  findAll,
   find,
   getName,
-  removeElement,
   innerText,
-  getElementById,
-  textContent,
 } = require("domutils");
-const domRender = require("dom-serializer").default;
 const exphbs = require("express-handlebars");
+
+const { parseBookData } = require("./controllers/BookData.js");
 
 if (!globalThis.fetch) {
   globalThis.fetch = fetch;
@@ -31,59 +28,6 @@ app.use(express.json());
 
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
-
-const parseBookElement = (ele) => {
-  switch (getAttributeValue(ele, "id")) {
-    case "coverImage":
-      return getAttributeValue(ele, "src");
-    case "bookTitle":
-      return innerText(ele);
-    case "bookSeries":
-      return innerText(ele);
-    case "description":
-      const children = getChildren(ele);
-      const descriptions = findAll((ele) => getName(ele) === "span", children);
-      return textContent(descriptions[1]);
-    default:
-      return {};
-  }
-};
-
-const parseBookResult = async () => {
-  let json;
-  const response = await fetch(
-    "https://www.goodreads.com/book/show/5907.The_Hobbit_or_There_and_Back_Again"
-  );
-  const rawHtmlData = await response.text();
-
-  const handler = new DomHandler((error, dom) => {
-    if (error) {
-      console.error(error);
-    } else {
-      const scriptDom = findOne((ele) => {
-        return getName(ele) === "script";
-      }, dom);
-      removeElement(scriptDom);
-      const mainDom = findOne((ele) => {
-        return getName(ele) === "body";
-      }, dom);
-      json = {};
-      json.coverImg =
-        parseBookElement(getElementById("coverImage", mainDom)) ?? {};
-      json.bookTitle =
-        parseBookElement(getElementById("bookTitle", mainDom)) ?? {};
-      json.bookSeries =
-        parseBookElement(getElementById("bookSeries", mainDom)) ?? {};
-      json.description =
-        parseBookElement(getElementById("description", mainDom)) ?? {};
-    }
-  });
-  const parser = new Parser(handler);
-  parser.write(rawHtmlData);
-  parser.end();
-  console.log(json);
-  return json;
-};
 
 const parseBookSearchResult = (cNodes) => {
   const tableRowNodes = find((node) => getName(node) === "tr", cNodes, true);
@@ -136,9 +80,18 @@ app.get("/", async (req, res) => {
   res.render("home");
 });
 
+app.get("/book/:bookString", async (req, res) => {
+  const book = await parseBookData(
+    `www.goodreads.com/book/show/${req.params.bookString}`
+  );
+  res.render("book", { data: book });
+});
+
 app.get("/scrape", async (req, res) => {
-  const json = await parseBookResult();
-  res.render("book", { data: json });
+  const book = await parseBookData(
+    `www.goodreads.com/book/show/5907.The_Hobbit_or_There_and_Back_Again`
+  );
+  res.render("book", { data: book });
 });
 
 app.get("/search", async (req, res) => {
