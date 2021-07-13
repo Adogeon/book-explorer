@@ -7,20 +7,22 @@ const fetch = require("node-fetch");
  * Parse website according to the input callback
  * @param {string} url the url string to be parse
  * @param {Function} cb callback function for the handler
+ * @returns {any} result depend on callback
  */
 async function parseURL(url, cb) {
   const fetchRes = await fetch(url);
   const rawHtmlData = await fetchRes.text();
-  let result;
+  let cbResult;
   const handler = new DomHandler((error, dom) => {
     if (error) throw new Error(`Parse Error: ${error}`);
     const mainDom = findOne((ele) => getName(ele) === "body", dom);
-    result = cb(mainDom);
+    cbResult = cb(mainDom);
   });
   const parser = new Parser(handler);
   parser.write(rawHtmlData);
   parser.end();
-  return result;
+  //return callback function result
+  return cbResult;
 }
 
 /**
