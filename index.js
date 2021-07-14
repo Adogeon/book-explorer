@@ -40,8 +40,9 @@ app.get("/search", async (req, res) => {
 
 app.get("/test1", async (req, res) => {
   const book = await parseBookData(
-    `www.goodreads.com/book/show/5907.The_Hobbit_or_There_and_Back_Again`
+    `https://www.goodreads.com/book/show/5907.The_Hobbit_or_There_and_Back_Again`
   );
+  console.log(book);
   res.render("book", { data: book });
 });
 

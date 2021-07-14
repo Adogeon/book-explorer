@@ -10,6 +10,7 @@ const fetch = require("node-fetch");
  * @returns {any} result depend on callback
  */
 async function parseURL(url, cb) {
+  console.log(url);
   const fetchRes = await fetch(url);
   const rawHtmlData = await fetchRes.text();
   let cbResult;

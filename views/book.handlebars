@@ -1,15 +1,21 @@
-<div>
-  <h1>Scrapre Book Result</h1>
-  <div class="imageWrapper">
-    <img id="bookCover" alt="book cover" src={{data.coverImg}} />
+<div class="book-main">
+  <h1 class="book-title">{{data.title}}</h1>
+  <div class="book-series">
+    {{data.series}}
   </div>
   <div>
-    <h2>{{data.bookTitle}}</h2>
+    <span>By</span>
+    {{#each data.authors}}
+    <span>{{this}}</span>
+    {{/each}}
   </div>
-  <div>
-    <p>{{data.bookSeries}}</p>
+  <div class="book-info">
+    <div class="book-cover">
+      <img id="bookCover" alt="book cover" src={{data.imgCover}} style="width:100%; height: auto; flex-basis:1;flex-growth:1"/>
+    </div>
+    <div class="description" style="width: 60%">
+      {{data.desc}}
+    </div>
   </div>
-  <div>
-    {{data.description}}
-  </div>
+  
 </div>
