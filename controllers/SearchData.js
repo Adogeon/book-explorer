@@ -45,7 +45,6 @@ async function parseSearchData(url) {
         dataNode,
         true
       );
-
       const titleNode = nameNodes[0];
       const authorNodes = nameNodes.slice(1);
 

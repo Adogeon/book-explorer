@@ -4,7 +4,7 @@ const fetch = require("node-fetch");
 const exphbs = require("express-handlebars");
 
 const { parseBookData } = require("./controllers/BookData.js");
-const { parseBookSearch } = require("./controllers/SearchData.js");
+const { parseSearchData } = require("./controllers/SearchData.js");
 
 if (!globalThis.fetch) {
   globalThis.fetch = fetch;
@@ -32,7 +32,7 @@ app.get("/book/:bookString", async (req, res) => {
 });
 
 app.get("/search", async (req, res) => {
-  const result = await parseBookSearch(
+  const result = await parseSearchData(
     `www.goodreads.com/search?q=${req.params.bookSearch}$search_type=books`
   );
   res.render("result", { data: result });
@@ -42,12 +42,11 @@ app.get("/test1", async (req, res) => {
   const book = await parseBookData(
     `https://www.goodreads.com/book/show/5907.The_Hobbit_or_There_and_Back_Again`
   );
-  console.log(book);
   res.render("book", { data: book });
 });
 
 app.get("/test2", async (req, res) => {
-  const result = await parseBookSearch(
+  const result = await parseSearchData(
     `https://www.goodreads.com/search?q=Monkey&search_type=books`
   );
   res.render("result", { data: result });
