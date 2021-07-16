@@ -58,7 +58,10 @@ async function parseBookData(url) {
       descChildren,
       true
     );
-    desc = textContent(descTextDoms[1]);
+    desc =
+      descTextDoms.length > 1
+        ? textContent(descTextDoms[1])
+        : textContent(descTextDoms[0]);
     //get book authors
     const bookAuthorsDom = getElementById("bookAuthors", mainDom);
     const authorNameNodes = find(

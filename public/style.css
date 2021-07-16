@@ -1,6 +1,37 @@
 .element {
   margin-left: 0.5rem;
 }
+.home-area {
+  width: 80%;
+  min-height: 60vh;
+  margin: auto;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+}
+
+.search-label {
+  font-size: 20px;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+.search-input,
+.search-input:focus {
+  padding: 0.25em 0.5em;
+  font-size: 20px;
+  border-radius: 15px;
+  border-width: 1.25px;
+  margin-top: 3px;
+  outline: none;
+}
+.search-input:focus {
+  box-shadow: 0 0 3pt 2pt cornflowerblue;
+}
+
+.search-button {
+  margin-top: 1em;
+  margin-left: auto;
+}
 
 .book-main {
   width: 80%;
