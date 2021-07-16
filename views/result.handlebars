@@ -1,9 +1,13 @@
-<div>
+<main>
   <h1>Book Result</h1>
+  <div class="simple-search">
+    <input class="search-input" type="text" name="search-input" />
+    <button class="search-button">Search</button>
+  </div>
   <hr>
   <div class="result-area">
     {{#each data}}
     {{> resultrow this}}
     {{/each}}
   </div>
-</div>
+</main>

@@ -32,7 +32,6 @@ app.get("/book/:bookString", async (req, res) => {
 });
 
 app.get("/search/:bookSearch", async (req, res) => {
-  console.log(req.params.bookSearch);
   const result = await parseSearchData(
     `https://www.goodreads.com/search?q=${req.params.bookSearch}&search_type=books`
   );
