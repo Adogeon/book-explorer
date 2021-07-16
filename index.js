@@ -52,6 +52,8 @@ app.get("/test2", async (req, res) => {
   res.render("result", { data: result });
 });
 
-app.listen("3000", () => {
-  console.log("Express is listen on port 3000");
+const PORT = process.env.PORT || "3000";
+
+app.listen(PORT, () => {
+  console.log(`Express is listen on port ${PORT}`);
 });
