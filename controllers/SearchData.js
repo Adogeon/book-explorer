@@ -1,4 +1,4 @@
-const { parseURL, whitespaceTrim } = require("./utils.js");
+const { parseURL, whitespaceTrim, returnBookString } = require("./utils.js");
 const {
   getElementsByTagName,
   getName,
@@ -45,6 +45,11 @@ async function parseSearchData(url) {
         dataNode,
         true
       );
+      const urlNodes = find(
+        (n) => getAttributeValue(n, "itemprop") === "url",
+        dataNode,
+        true
+      );
       const titleNode = nameNodes[0];
       const authorNodes = nameNodes.slice(1);
 
@@ -52,6 +57,9 @@ async function parseSearchData(url) {
         coverImg: getAttributeValue(coverNode, "src"),
         title: whitespaceTrim(innerText(titleNode)),
         author: authorNodes.map((n) => whitespaceTrim(innerText(n))),
+        url: `/book/${returnBookString(
+          getAttributeValue(urlNodes[0], "href")
+        )}`,
       };
     });
   });

@@ -10,7 +10,6 @@ const fetch = require("node-fetch");
  * @returns {any} result depend on callback
  */
 async function parseURL(url, cb) {
-  console.log(url);
   const fetchRes = await fetch(url);
   const rawHtmlData = await fetchRes.text();
   let cbResult;
@@ -35,4 +34,13 @@ function whitespaceTrim(str) {
   return str.replace(/[\n\r]+|[\s]{2,}/g, " ").trim();
 }
 
-module.exports = { parseURL, whitespaceTrim };
+/**
+ * Removing goodread bookString from original link
+ * @param {string} str -input string
+ * return {string}
+ */
+function returnBookString(str) {
+  return str.split("?")[0].split("/").pop();
+}
+
+module.exports = { parseURL, whitespaceTrim, returnBookString };

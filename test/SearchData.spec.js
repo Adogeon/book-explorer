@@ -27,6 +27,9 @@ describe("parseSearchData", () => {
     expect(result[0])
       .to.have.property("title")
       .that.is.equal("The Firework-Maker's Daughter");
+    expect(result[0])
+      .to.have.property("url")
+      .that.is.equal("/book/123070.The_Firework_Maker_s_Daughter");
     expect(result[1])
       .to.have.property("title")
       .that.is.equal("The Firework Exploded (The Holidays, #3)");

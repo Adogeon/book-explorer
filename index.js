@@ -26,14 +26,14 @@ app.get("/", async (req, res) => {
 
 app.get("/book/:bookString", async (req, res) => {
   const book = await parseBookData(
-    `www.goodreads.com/book/show/${req.params.bookString}`
+    `https://www.goodreads.com/book/show/${req.params.bookString}`
   );
   res.render("book", { data: book });
 });
 
 app.get("/search", async (req, res) => {
   const result = await parseSearchData(
-    `www.goodreads.com/search?q=${req.params.bookSearch}$search_type=books`
+    `https://www.goodreads.com/search?q=${req.params.bookSearch}$search_type=books`
   );
   res.render("result", { data: result });
 });
